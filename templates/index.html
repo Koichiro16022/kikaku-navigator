@@ -2,155 +2,169 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>規格 Navigator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>規格 Navigator | ZERO & 閃</title>
     <style>
         :root {
-            --primary-bg: #0d1117;
-            --sidebar-bg: #161b22;
-            --accent-silver: #c9d1d9;
-            --text-main: #e6edf3;
-            --border-color: #30363d;
-            --warning-red: #da3633;
+            --bg-dark: #0d1117;
+            --panel-bg: #161b22;
+            --accent-blue: #58a6ff;
+            --text-main: #c9d1d9;
+            --warning-red: #f85149;
+            --success-green: #3fb950;
         }
 
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--primary-bg); color: var(--text-main);
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Meiryo, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        /* 検索トップ */
+        /* 検索画面（初期） */
         #start-screen {
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; height: 100vh;
+            text-align: center;
             transition: opacity 0.5s ease;
         }
 
-        .logo { font-size: 3rem; font-weight: bold; margin-bottom: 2rem; letter-spacing: 1px;}
-        .logo span { font-weight: 300; margin-left: 8px; color: var(--accent-silver); font-family: 'Helvetica', sans-serif;}
+        .search-container {
+            position: relative;
+            width: 600px;
+        }
 
-        .search-container { width: 550px; }
         input[type="text"] {
-            width: 100%; padding: 15px 25px; font-size: 1.1rem;
-            border-radius: 30px; border: 1px solid var(--border-color);
-            background: var(--sidebar-bg); color: white; outline: none;
-            box-sizing: border-box;
+            width: 100%;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            border: 1px solid #30363d;
+            background: #161b22;
+            color: white;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .candidates { margin-top: 20px; display: none; flex-direction: column; gap: 10px; }
-        .candidate-btn {
-            background: var(--sidebar-bg); border: 1px solid var(--border-color);
-            color: var(--text-main); padding: 15px; border-radius: 8px;
-            cursor: pointer; text-align: left; transition: 0.2s;
+        #results {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
-        .candidate-btn:hover { border-color: white; background: #21262d; }
 
-        /* メイン画面 */
-        #main-demo { display: none; grid-template-columns: 7fr 3fr; height: 100vh; }
+        .result-item {
+            padding: 12px 20px;
+            background: #21262d;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .result-item:hover {
+            border-color: var(--accent-blue);
+            background: #30363d;
+        }
+
+        /* デモメイン画面（2カラム） */
+        #main-demo {
+            display: none;
+            width: 95vw;
+            height: 90vh;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+        }
 
         .preview-area {
-            background: #1c2128; border-right: 1px solid var(--border-color);
-            display: flex; justify-content: center; align-items: center;
+            background: #30363d;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid #484f58;
         }
 
-        .pdf-placeholder {
-            width: 80%; height: 85%; border: 2px dashed var(--border-color);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        .info-panel {
+            background: var(--panel-bg);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
         }
 
         .warning-box {
-            color: var(--warning-red); border: 2px solid var(--warning-red);
-            padding: 15px 30px; font-weight: bold; font-size: 1.4rem;
+            background: rgba(248, 81, 73, 0.1);
+            color: var(--warning-red);
+            border: 1px solid var(--warning-red);
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
         }
 
-        .navigator-panel { background: var(--sidebar-bg); padding: 30px; display: flex; flex-direction: column;}
-        .panel-header { font-size: 1.1rem; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+        .pdf-placeholder { text-align: center; padding: 40px; }
         
-        .status-badge {
-            border: 1px solid var(--warning-red); color: var(--warning-red);
-            padding: 4px 12px; font-size: 0.9rem; font-weight: bold; margin-bottom: 25px; display: inline-block; width: fit-content;
-        }
-
-        .result-group { margin-bottom: 30px; }
-        .result-label { font-size: 0.85rem; color: #8b949e; margin-bottom: 8px; }
-        .result-value { font-size: 1rem; margin-bottom: 6px; }
-
-        .navigator-msg {
-            background: rgba(255,255,255,0.05); padding: 25px;
-            border-left: 4px solid var(--accent-silver); margin-top: 20px;
-        }
-
-        .reset-btn {
-            margin-top: auto; background: none; border: 1px solid var(--border-color);
-            color: #8b949e; cursor: pointer; padding: 10px; border-radius: 4px;
-        }
-        .reset-btn:hover { color: white; border-color: white; }
+        h2 { color: var(--accent-blue); margin-top: 0; }
+        .data-row { margin: 15px 0; font-size: 1.1rem; line-height: 1.6; }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <div class="logo">規格 <span>Navigator</span></div>
+        <h1 style="color:white; margin-bottom:30px;">規格 Navigator</h1>
         <div class="search-container">
-            <input type="text" id="query" placeholder="規格番号を入力 (例: 8265)" oninput="handleInput()" autocomplete="off">
-            <div id="candidates" class="candidates"></div>
+            <input type="text" id="search-input" placeholder="規格番号を入力 (例: 8265, 8266)" autocomplete="off">
+            <div id="results"></div>
         </div>
     </div>
 
     <div id="main-demo">
         <div class="preview-area">
-            <div class="pdf-placeholder">
-                <div class="warning-box">最新版PDF未保有</div>
-                <p id="preview-text" style="margin-top:20px; color:#8b949e; font-size: 0.9rem;"></p>
             </div>
-        </div>
-        <div class="navigator-panel">
-            <div id="panel-title" class="panel-header"></div>
-            <div class="status-badge">⚠️ 旧版</div>
-            
-            <div class="result-group">
-                <div class="result-label">■ 詳細照合結果</div>
-                <div id="latest-ver" class="result-value"></div>
-                <div id="local-ver" class="result-value"></div>
-                <div id="storage-status" class="result-value" style="color:var(--warning-red); font-weight:bold; margin-top:12px;"></div>
-            </div>
-
-            <div class="navigator-msg">
-                <strong>■ Navigator判定：</strong><br>
-                <span style="display: block; margin-top: 10px;">社内に最新のエビデンスが存在しません。</span>
-            </div>
-            
-            <button class="reset-btn" onclick="location.reload()">新しい検索に戻る</button>
+        <div class="info-panel">
+            <h2 id="panel-title">判定結果</h2>
+            <div class="data-row" id="latest-ver"></div>
+            <div class="data-row" id="local-ver"></div>
+            <div class="data-row" id="storage-status" style="font-weight:bold;"></div>
+            <hr style="border:0; border-top:1px solid #30363d; margin:20px 0;">
+            <p style="color:#8b949e; font-size:0.9rem;">
+                AI解析：JSA(日本規格協会)の公開データベースと社内サーバー内PDFを突合しました。
+            </p>
+            <button onclick="location.reload()" style="margin-top:auto; padding:10px; cursor:pointer;">検索に戻る</button>
         </div>
     </div>
 
     <script>
-        async function handleInput() {
-            const query = document.getElementById('query').value;
-            const container = document.getElementById('candidates');
-            if (query.length < 1) { container.style.display = 'none'; return; }
+        const searchInput = document.getElementById('search-input');
+        const resultsDiv = document.getElementById('results');
 
-            // Flaskの /search エンドポイントへ問い合わせ
-            const res = await fetch('/search', {
+        searchInput.addEventListener('input', async () => {
+            const query = searchInput.value;
+            if (query.length < 2) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const response = await fetch('/search', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({query})
             });
-            const data = await res.json();
-            
-            container.innerHTML = '';
-            if (data.length > 0) {
-                container.style.display = 'flex';
-                data.forEach(item => {
-                    const btn = document.createElement('button');
-                    btn.className = 'candidate-btn';
-                    btn.innerHTML = `<strong>${item.target}</strong>：${item.name}`;
-                    btn.onclick = () => showResult(item);
-                    container.appendChild(btn);
-                });
-            }
-        }
+            const data = await response.json();
+
+            resultsDiv.innerHTML = data.map(item => `
+                <div class="result-item" onclick='showResult(${JSON.stringify(item)})'>
+                    <strong>${item.target}</strong> - ${item.name}
+                </div>
+            `).join('');
+        });
 
         function showResult(item) {
             document.getElementById('start-screen').style.opacity = '0';
@@ -159,10 +173,27 @@
                 document.getElementById('main-demo').style.display = 'grid';
                 
                 document.getElementById('panel-title').innerText = `【判定対象：${item.target}】`;
-                document.getElementById('latest-ver').innerText = `・最新版：${item.latest_year}年度版（JSA公開情報による）`;
+                document.getElementById('latest-ver').innerText = `・最新版：${item.latest_year}年度版`;
                 document.getElementById('local-ver').innerText = `・社内所蔵：${item.local_year}年度版まで`;
-                document.getElementById('storage-status').innerText = `・管理状況：[ 最新版PDF未保有 ]`;
-                document.getElementById('preview-text').innerText = `${item.target}：${item.latest_year}年度版の資料は社内サーバーに存在しません。`;
+                
+                const previewArea = document.querySelector('.preview-area');
+                const storageStatus = document.getElementById('storage-status');
+
+                if (item.has_pdf) {
+                    // PDFがある場合 (8266など)
+                    previewArea.innerHTML = `<iframe src="/static/JIS_B_8266_sample.pdf" width="100%" height="100%" style="border:none;"></iframe>`;
+                    storageStatus.innerText = `・管理状況：[ 社内在庫あり ]`;
+                    storageStatus.style.color = "var(--success-green)";
+                } else {
+                    // PDFがない場合 (8265など)
+                    previewArea.innerHTML = `
+                        <div class="pdf-placeholder">
+                            <div class="warning-box">最新版PDF未保有</div>
+                            <p style="margin-top:20px; color:#8b949e;">${item.target}：${item.latest_year}年度版は社内サーバーに存在しません。</p>
+                        </div>`;
+                    storageStatus.innerText = `・管理状況：[ 最新版PDF未保有 ]`;
+                    storageStatus.style.color = "var(--warning-red)";
+                }
             }, 400);
         }
     </script>

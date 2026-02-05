@@ -2,7 +2,8 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-# デモ用の固定データ（8265と入力された際の挙動を定義）
+# デモ用の固定データ
+# has_pdf が True ならPDF表示、False なら未保有警告を出します
 DEMO_DATA = {
     "8265": {
         "target": "JIS B 8265",
@@ -33,5 +34,6 @@ def search():
     return jsonify(results)
 
 if __name__ == '__main__':
-    # ポート5001で起動します（ブラウザでは http://127.0.0.1:5001 でアクセス）
-    app.run(debug=True, port=5001)
+    # Codespaces環境で外部からアクセス可能にするため 0.0.0.0 で起動
+    # ポートは先ほど確認した 5001 を使用します
+    app.run(host='0.0.0.0', port=5001, debug=True)
